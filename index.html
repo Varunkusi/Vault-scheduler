@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Vault</title>
+<meta name="theme-color" content="#0F2A24">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Vault">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icons/icon-180.png">
+<link rel="icon" href="icons/icon-192.png">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;800&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0F2A24;--sf:#16372F;--sf2:#1D463C;--tx:#F2EBD9;--mt:#9FB5A8;--gd:#E3B04B;--gdt:#1A1405;--rd:#E8735C;--ln:#2B5648;color-scheme:dark;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0F2A24}}
+@media (prefers-color-scheme:light){:root:not([data-theme="dark"]){--bg:#F3EEDD;--sf:#FBF8EC;--sf2:#EAE3CB;--tx:#12301F;--mt:#5B6F61;--gd:#9A6A0A;--gdt:#FFF8E5;--rd:#C2492F;--ln:#D6CDB0;color-scheme:light}}
+:root[data-theme="dark"]{--bg:#0F2A24}
+*{box-sizing:border-box}html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;-webkit-tap-highlight-color:transparent;overscroll-behavior-y:none;background:var(--bg);color:var(--tx);font:16px/1.5 'DM Sans',system-ui,sans-serif;min-height:100vh}
+h1,h2,.big{font-family:'Bricolage Grotesque','DM Sans',system-ui,sans-serif;margin:0}
+.app{max-width:560px;margin:0 auto;padding:16px 16px 90px}
+header{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:12px}
+.lvl{font-weight:800;font-size:22px;letter-spacing:-.01em}.sub{color:var(--mt);font-size:14px}
+.bal{background:var(--gd);color:var(--gdt);border-radius:999px;padding:6px 14px;font-weight:700;white-space:nowrap}
+.bar{height:8px;background:var(--sf2);border-radius:9px;overflow:hidden;margin:6px 0 16px}.bar i{display:block;height:100%;background:var(--gd);transition:width .4s}
+.mission{background:var(--sf);border:1px solid var(--ln);border-radius:14px;padding:12px 14px;margin-bottom:14px}
+.mission input{width:100%;background:transparent;border:0;color:var(--tx);font:700 17px 'Bricolage Grotesque','DM Sans',sans-serif;outline:none}
+.panel{background:var(--sf);border:1px solid var(--ln);border-radius:18px;padding:18px;margin-bottom:14px}
+.modes{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px}
+.mode{background:var(--sf2);border:2px solid transparent;color:var(--tx);border-radius:12px;padding:10px 6px;font:inherit;cursor:pointer;text-align:center}
+.mode b{display:block;font-size:16px}.mode span{font-size:12px;color:var(--mt)}
+.mode[aria-pressed=true]{border-color:var(--gd)}
+.ringwrap{position:relative;width:240px;height:240px;margin:0 auto 14px}
+.ringwrap svg{width:100%;height:100%;transform:rotate(-90deg)}
+.ringwrap .t{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.big{font-size:54px;font-weight:800;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+input[type=text]{background:var(--sf2);border:1px solid var(--ln);color:var(--tx);border-radius:10px;padding:10px 12px;font:inherit;width:100%}
+.btn{background:var(--gd);color:var(--gdt);border:0;border-radius:12px;padding:13px 20px;font:700 16px 'DM Sans',sans-serif;cursor:pointer;width:100%}
+.btn.ghost{background:transparent;color:var(--tx);border:1px solid var(--ln)}
+.btn.sm{width:auto;padding:8px 14px;font-size:14px}
+.row{display:flex;gap:8px;align-items:center}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;text-align:center}
+.stats div{background:var(--sf2);border-radius:12px;padding:10px 4px}.stats b{display:block;font:800 22px 'Bricolage Grotesque','DM Sans',sans-serif}.stats span{font-size:12px;color:var(--mt)}
+.task{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--ln)}
+.task:last-child{border:0}.task.done span{text-decoration:line-through;color:var(--mt)}
+.task input{width:22px;height:22px;accent-color:var(--gd)}.task span{flex:1}
+.x{background:none;border:0;color:var(--mt);font-size:20px;cursor:pointer}
+nav{position:fixed;left:0;right:0;bottom:0;background:var(--sf);border-top:1px solid var(--ln);display:flex;justify-content:center;gap:4px;padding:8px 8px calc(8px + env(safe-area-inset-bottom,0px))}
+nav button{flex:1;max-width:180px;background:none;border:0;color:var(--mt);font:700 14px 'DM Sans',sans-serif;padding:10px;border-radius:10px;cursor:pointer}
+nav button[aria-selected=true]{background:var(--sf2);color:var(--gd)}
+.quote{color:var(--mt);font-size:14px;text-align:center;margin:8px 0 0;min-height:42px}
+.nudge{z-index:30;position:fixed;left:12px;right:12px;top:calc(12px + env(safe-area-inset-top,0px));max-width:536px;margin:0 auto;background:var(--rd);color:#fff;border-radius:14px;padding:14px 16px;font-weight:700;display:none}
+.banner{background:var(--sf2);border-left:4px solid var(--gd);border-radius:10px;padding:12px;margin-bottom:12px;font-size:15px}
+.week{display:flex;gap:6px;align-items:flex-end;height:90px;margin-top:10px}
+.week div{flex:1;text-align:center;font-size:11px;color:var(--mt)}.week i{display:block;background:var(--gd);border-radius:5px 5px 0 0;min-height:3px;margin-bottom:4px}
+.hide{display:none}h2{font-size:19px;margin-bottom:10px}
+
+.ov{position:fixed;inset:0;z-index:20;background:var(--bg);overflow:auto;padding:calc(24px + env(safe-area-inset-top,0px)) 20px calc(24px + env(safe-area-inset-bottom,0px))}
+.ov .in{max-width:520px;margin:0 auto}.ov h1{font-size:34px;line-height:1.1;margin:8px 0 8px}.ov input[type=text]{margin-bottom:10px;padding:14px}
+.lk{background:none;border:0;color:var(--mt);font:inherit;text-decoration:underline;cursor:pointer;display:block;margin:16px auto 0}
+.ov ul{padding-left:20px;color:var(--mt)}
+button:focus-visible,input:focus-visible{outline:3px solid var(--gd);outline-offset:2px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="nudge" id="nudge" role="alert"></div>
+<div id="ov" class="ov hide" role="dialog" aria-modal="true"></div>
+<div class="app">
+<header><div><div class="lvl" id="lvl"></div><div class="sub" id="xpsub"></div></div><div class="bal" id="bal"></div></header>
+<div class="bar"><i id="xpbar"></i></div>
+<div class="mission"><div class="sub">My mission</div><input id="mission" type="text" maxlength="80" placeholder="Write it as if it’s already happening: I build a billion-dollar company"></div>
+
+<section id="v-focus">
+ <div class="panel">
+  <div class="modes" id="modes"></div>
+  <div class="ringwrap"><svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="45" fill="none" stroke="var(--sf2)" stroke-width="6"/><circle id="ring" cx="50" cy="50" r="45" fill="none" stroke="var(--gd)" stroke-width="6" stroke-linecap="round" stroke-dasharray="282.7" stroke-dashoffset="0"/></svg>
+   <div class="t"><div class="big" id="clock">25:00</div><div class="sub" id="state">Ready</div></div></div>
+  <div id="setup"><input type="text" id="what" maxlength="60" placeholder="What will you work on? (one thing)" style="margin-bottom:10px"><button class="btn" id="go">Start focus</button></div>
+  <div id="live" class="hide"><div class="sub" id="strikes" style="text-align:center;margin-bottom:10px"></div><button class="btn ghost" id="quit">Give up (lose the session)</button></div>
+  <p class="quote" id="quote"></p>
+ </div>
+ <div class="panel stats"><div><b id="s-min">0</b><span>min today</span></div><div><b id="s-ses">0</b><span>sessions</span></div><div><b id="s-str">0</b><span>day streak</span></div></div>
+</section>
+
+<section id="v-plan" class="hide">
+ <div class="panel">
+  <div id="planbanner"></div>
+  <div class="row" style="margin-bottom:12px"><button class="btn sm" id="tToday">Today</button><button class="btn sm ghost" id="tTom">Tomorrow</button></div>
+  <div class="row" style="margin-bottom:10px"><input type="text" id="tIn" maxlength="70" placeholder="Add a task, e.g. 9:00 Learn sales for 1 hour"><button class="btn sm" id="tAdd">Add</button></div>
+  <div id="tasks"></div>
+  <p class="sub" id="tHint">Each finished task gives 20 XP. Plan tomorrow before you sleep so you wake up with a target.</p>
+ </div>
+</section>
+
+<section id="v-win" class="hide">
+ <div class="panel"><h2>Reward shop</h2><p class="sub" style="margin-top:-6px">Spend XP on guilt-free rewards. Reels become a reward, not a habit.</p><div id="shop"></div>
+  <div class="row" style="margin-top:12px"><input type="text" id="rName" maxlength="40" placeholder="New reward"><input type="text" id="rCost" inputmode="numeric" placeholder="XP" style="width:90px"><button class="btn sm" id="rAdd">Add</button></div></div>
+ <div class="panel"><h2>Last 7 days</h2><div class="week" id="week"></div></div>
+ <div class="panel"><h2>Daily rhythm</h2><p class="sub" style="margin-top:-6px">Vault opens a night planner and a morning check-in at these times.</p>
+ <div class="row" style="margin-bottom:10px"><label class="sub" style="flex:1">Wake-up time<input type="time" id="sWake" style="width:100%;background:var(--sf2);border:1px solid var(--ln);color:var(--tx);border-radius:10px;padding:10px;font:inherit"></label><label class="sub" style="flex:1">Plan tomorrow at<input type="time" id="sPlan" style="width:100%;background:var(--sf2);border:1px solid var(--ln);color:var(--tx);border-radius:10px;padding:10px;font:inherit"></label></div>
+ <button class="btn ghost" id="openPlan">Open tomorrow’s planner now</button></div>
+ <div class="panel"><h2>Alerts</h2><p class="sub" style="margin-top:-6px">Get a browser alert when a session ends or when you wander off mid-session. Works while this tab stays open.</p><button class="btn ghost" id="notif">Turn on alerts</button></div>
+</section>
+</div>
+<nav role="tablist"><button role="tab" data-v="focus" aria-selected="true">Focus</button><button role="tab" data-v="plan" aria-selected="false">Plan</button><button role="tab" data-v="win" aria-selected="false">Rewards</button></nav>
+
+<script>
+(function(){
+var MODES={easy:{n:'Easy',m:15,x:1,s:99,d:'15 min · 1× XP'},medium:{n:'Medium',m:25,x:2,s:3,d:'25 min · 2× XP'},hard:{n:'Hard',m:50,x:3,s:1,d:'50 min · 3× XP'}};
+var TITLES=['Starter','Learner','Builder','Operator','Founder','Scaler','Mogul','Titan','Billionaire'];
+var QUOTES=['Every minute you protect is a vote for the person you are becoming.','The reel will be there later. This hour will not.','Discipline is a gift to your future self.','Small sessions, stacked daily, build empires.','You don’t need motivation. You need the next 15 minutes.','Billionaires are made on boring Tuesdays.'];
+var NUDGES=['Back to it. Your session is still running.','You left. Your future self noticed.','Close the app, return to the work.'];
+var S={xp:0,spent:0,mission:'',mode:'easy',days:{},tasks:[],rewards:[{id:1,n:'20 min of reels, guilt-free',c:100},{id:2,n:'Favourite snack',c:60},{id:3,n:'Movie night',c:400}],run:null,set:{wake:'06:30',plan:'21:30'},chk:{}};
+var $=function(i){return document.getElementById(i)};
+function load(){try{var r=localStorage.getItem('vault1');if(r){var o=JSON.parse(r);for(var k in o)S[k]=o[k]}}catch(e){}}
+function save(){try{localStorage.setItem('vault1',JSON.stringify(S))}catch(e){}}
+function ds(off){var d=new Date();d.setDate(d.getDate()+(off||0));return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
+function day(k){return S.days[k]||(S.days[k]={min:0,ses:0})}
+function lvl(){return Math.floor(Math.sqrt(S.xp/50))+1}
+function streak(){var n=0,o=0;if(!(S.days[ds(0)]&&S.days[ds(0)].ses))o=-1;for(;;o--){var d=S.days[ds(o)];if(d&&d.ses)n++;else break}return n}
+function pad(n){return String(n).padStart(2,'0')}
+function esc(t){return String(t).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+
+function head(){var L=lvl(),lo=Math.pow(L-1,2)*50,hi=Math.pow(L,2)*50;
+ $('lvl').textContent='Level '+L+' · '+TITLES[Math.min(L-1,TITLES.length-1)];
+ $('xpsub').textContent=S.xp+' XP · '+(hi-S.xp)+' to next level';
+ $('xpbar').style.width=Math.min(100,(S.xp-lo)/(hi-lo)*100)+'%';
+ $('bal').textContent=(S.xp-S.spent)+' XP to spend'}
+function stats(){var d=day(ds(0));$('s-min').textContent=d.min;$('s-ses').textContent=d.ses;$('s-str').textContent=streak()}
+
+function modes(){var h='';for(var k in MODES){h+='<button class="mode" data-m="'+k+'" aria-pressed="'+(S.mode===k)+'"><b>'+MODES[k].n+'</b><span>'+MODES[k].d+'</span></button>'}
+ $('modes').innerHTML=h;
+ Array.prototype.forEach.call($('modes').children,function(b){b.onclick=function(){if(S.run)return;S.mode=b.dataset.m;save();modes();idle()}})}
+function idle(){var m=MODES[S.mode];$('clock').textContent=pad(m.m)+':00';$('ring').style.strokeDashoffset=0;$('state').textContent='Ready'}
+
+var tick=null,away=null,hiddenAt=0;
+function startS(){var m=MODES[S.mode];S.run={end:Date.now()+m.m*60000,tot:m.m*60000,mode:S.mode,what:$('what').value.trim(),strikes:0};save();ui()}
+function ui(){var r=S.run;$('setup').classList.toggle('hide',!!r);$('live').classList.toggle('hide',!r);
+ if(!r){idle();clearInterval(tick);return}
+ var m=MODES[r.mode];$('state').textContent=r.what||'Deep focus';
+ $('strikes').textContent=m.s>=99?'Leaving the tab costs 5 XP each time':'Distractions: '+r.strikes+' / '+m.s+(m.s===1?' (one slip ends it)':' allowed');
+ clearInterval(tick);tick=setInterval(step,500);step()}
+function step(){var r=S.run;if(!r)return;var left=r.end-Date.now();
+ if(left<=0){return finish(true)}
+ var s=Math.ceil(left/1000);$('clock').textContent=pad(Math.floor(s/60))+':'+pad(s%60);
+ $('ring').style.strokeDashoffset=282.7*(1-left/r.tot)}
+function beep(){try{var a=new (window.AudioContext||window.webkitAudioContext)(),o=a.createOscillator(),g=a.createGain();o.connect(g);g.connect(a.destination);o.frequency.value=660;g.gain.setValueAtTime(.2,a.currentTime);g.gain.exponentialRampToValueAtTime(.001,a.currentTime+.8);o.start();o.stop(a.currentTime+.8)}catch(e){}}
+function notify(t,b){try{if('Notification' in window&&Notification.permission==='granted'){if(navigator.serviceWorker&&navigator.serviceWorker.ready){navigator.serviceWorker.ready.then(function(r){r.showNotification(t,{body:b,icon:'icons/icon-192.png',badge:'icons/icon-192.png'})})}else{new Notification(t,{body:b})}}}catch(e){}}
+function toast(t,ms){var n=$('nudge');n.textContent=t;n.style.display='block';clearTimeout(n._t);n._t=setTimeout(function(){n.style.display='none'},ms||4000)}
+function finish(ok){var r=S.run;if(!r)return;S.run=null;clearInterval(tick);var m=MODES[r.mode];
+ if(ok){var gain=Math.max(0,m.m*m.x-(m.s>=99?r.strikes*5:0));S.xp+=gain;var d=day(ds(0));d.min+=m.m;d.ses++;beep();
+  toast('Session complete. +'+gain+' XP. Take a 5 minute break, then go again.',6000);notify('Session complete','+'+gain+' XP earned. Great work.')}
+ else{toast('Session lost. No XP. Reset and start again, smaller if needed.',5000)}
+ save();ui();head();stats();$('quote').textContent=QUOTES[Math.floor(Math.random()*QUOTES.length)]}
+
+document.addEventListener('visibilitychange',function(){var r=S.run;if(!r)return;
+ if(document.hidden){hiddenAt=Date.now();clearTimeout(away);away=setTimeout(function(){notify('Come back','Your '+MODES[r.mode].n+' focus session is still running.')},12000)}
+ else{clearTimeout(away);var gone=Date.now()-hiddenAt;if(!S.run)return;
+  if(Date.now()>=S.run.end){return finish(true)}
+  if(gone>5000){r.strikes++;save();var m=MODES[r.mode];
+   if(r.strikes>=m.s&&m.s<99){return finish(false)}
+   toast(NUDGES[r.strikes%NUDGES.length]+' (away '+Math.round(gone/1000)+'s)',5000);ui()}}});
+
+function tasks(){var k=tab==='tom'?ds(1):ds(0);var list=S.tasks.filter(function(t){return t.d===k});
+ $('tasks').innerHTML=list.length?list.map(function(t){return '<div class="task'+(t.done?' done':'')+'"><input type="checkbox" data-id="'+t.id+'"'+(t.done?' checked':'')+' aria-label="Done"><span>'+esc(t.t)+'</span><button class="x" data-del="'+t.id+'" aria-label="Delete task">×</button></div>'}).join(''):'<p class="sub">No tasks yet. Add one thing that moves you toward your mission.</p>';
+ Array.prototype.forEach.call($('tasks').querySelectorAll('input'),function(c){c.onchange=function(){var t=S.tasks.filter(function(x){return x.id==c.dataset.id})[0];if(!t)return;
+  if(c.checked&&!t.done){t.done=true;S.xp+=20;toast('+20 XP. Task done.',2000)}else if(!c.checked&&t.done){t.done=false;S.xp=Math.max(0,S.xp-20)}save();head();tasks()}});
+ Array.prototype.forEach.call($('tasks').querySelectorAll('[data-del]'),function(b){b.onclick=function(){S.tasks=S.tasks.filter(function(x){return x.id!=b.dataset.del});save();tasks();banner()}});
+ $('tToday').className='btn sm'+(tab==='tom'?' ghost':'');$('tTom').className='btn sm'+(tab==='tom'?'':' ghost')}
+var tab='today';
+function banner(){var tom=S.tasks.some(function(t){return t.d===ds(1)});var h=new Date().getHours();
+ $('planbanner').innerHTML=(!tom&&h>=19)?'<div class="banner">It’s late. Plan tomorrow now: add 3 tasks under Tomorrow, then sleep.</div>':(!tom?'<div class="banner">Tomorrow has no plan yet. Add your first task under Tomorrow.</div>':'')}
+
+function shop(){$('shop').innerHTML=S.rewards.map(function(r){var can=S.xp-S.spent>=r.c;return '<div class="task"><span>'+esc(r.n)+'<br><small class="sub">'+r.c+' XP</small></span><button class="btn sm'+(can?'':' ghost')+'" data-buy="'+r.id+'"'+(can?'':' disabled')+'>Claim</button><button class="x" data-rd="'+r.id+'" aria-label="Remove reward">×</button></div>'}).join('');
+ Array.prototype.forEach.call($('shop').querySelectorAll('[data-buy]'),function(b){b.onclick=function(){var r=S.rewards.filter(function(x){return x.id==b.dataset.buy})[0];if(r&&S.xp-S.spent>=r.c){S.spent+=r.c;save();head();shop();toast('Claimed: '+r.n+'. Enjoy it, then back to work.',4000)}}});
+ Array.prototype.forEach.call($('shop').querySelectorAll('[data-rd]'),function(b){b.onclick=function(){S.rewards=S.rewards.filter(function(x){return x.id!=b.dataset.rd});save();shop()}})}
+function week(){var h='',mx=30,i,a=[];for(i=6;i>=0;i--){var k=ds(-i),m=(S.days[k]||{min:0}).min;a.push([k,m]);mx=Math.max(mx,m)}
+ a.forEach(function(p){var dt=new Date(p[0]+'T00:00:00');h+='<div><i style="height:'+Math.round(p[1]/mx*70)+'px"></i>'+p[1]+'m<br>'+'SMTWTFS'.charAt(dt.getDay())+'</div>'});$('week').innerHTML=h}
+
+function view(v){['focus','plan','win'].forEach(function(x){$('v-'+x).classList.toggle('hide',x!==v)});
+ Array.prototype.forEach.call(document.querySelectorAll('nav button'),function(b){b.setAttribute('aria-selected',b.dataset.v===v)});
+ if(v==='plan'){banner();tasks()}if(v==='win'){shop();week()}}
+
+
+function tm(x){var a=x.split(':');return +a[0]*60+ +a[1]}
+function nowM(){var d=new Date();return d.getHours()*60+d.getMinutes()}
+function f12(m){m=(m+1440)%1440;var h=Math.floor(m/60),a=h>=12?'PM':'AM';h=h%12||12;return h+':'+pad(m%60)+' '+a}
+var curOv='',skipP=false,skipM=false,lastN='';
+function chk(k){return S.chk[k]||(S.chk[k]={})}
+function closeOv(){curOv='';$('ov').classList.add('hide');$('ov').innerHTML='';head();stats()}
+function planO(tgt){curOv='p'+tgt;var list=S.tasks.filter(function(t){return t.d===tgt});var wk=tm(S.set.wake);
+ var dn=new Date(tgt+'T00:00:00').toLocaleDateString(undefined,{weekday:'long'});
+ $('ov').innerHTML='<div class="in"><div class="sub">Night planner</div><h1>Plan '+dn+' before you sleep</h1><p class="sub">Three tasks. Be specific: what, and roughly when. Your morning self will just follow the list.</p>'+
+ (list.length?'<ul>'+list.map(function(t){return '<li>'+esc(t.t)+'</li>'}).join('')+'</ul>':'')+
+ '<input type="text" id="p1" maxlength="70" placeholder="Task 1 (your most important)"><input type="text" id="p2" maxlength="70" placeholder="Task 2"><input type="text" id="p3" maxlength="70" placeholder="Task 3">'+
+ '<button class="btn" id="pLock">Lock in the plan (+30 XP)</button>'+
+ '<p class="sub" style="text-align:center;margin-top:14px">To wake at '+f12(wk)+', be asleep by '+f12(wk-450)+'. Phone away from the bed.</p>'+
+ '<button class="lk" id="pSkip">Not tonight</button></div>';
+ $('ov').classList.remove('hide');
+ $('pLock').onclick=function(){var n=0;['p1','p2','p3'].forEach(function(i){var v=$(i).value.trim();if(v){S.tasks.push({id:Date.now()+n,t:v,d:tgt,done:false});n++}});
+  if(!list.length&&!n){toast('Add at least one task.',2500);return}
+  chk(tgt).planned=true;S.xp+=30;save();closeOv();toast('Plan locked. +30 XP. Now sleep.',4000)};
+ $('pSkip').onclick=function(){skipP=true;closeOv()}}
+function mornO(){curOv='m';var n=nowM(),wk=tm(S.set.wake),list=S.tasks.filter(function(t){return t.d===ds(0)&&!t.done}),on=n<=wk,late=n-wk;
+ $('ov').innerHTML='<div class="in"><div class="sub">Morning check-in</div><h1>Good morning. Today’s plan:</h1>'+
+ (list.length?'<ul>'+list.map(function(t){return '<li style="color:var(--tx);margin-bottom:6px">'+esc(t.t)+'</li>'}).join('')+'</ul>':'<p class="sub">Nothing planned yet. Add your tasks first, then focus.</p>')+
+ '<p class="sub">'+(on?'You’re up on time. Check in for +25 XP.':'You’re '+late+' min past '+f12(wk)+'. Check in anyway for +10 XP, and be earlier tomorrow.')+'</p>'+
+ '<button class="btn" id="mUp">I’m up. Start the day</button>'+(list.length?'':'<button class="lk" id="mPlan">Add today’s tasks</button>')+'<button class="lk" id="mSkip">Later</button></div>';
+ $('ov').classList.remove('hide');
+ $('mUp').onclick=function(){var c=chk(ds(0));c.up=true;S.xp+=on?25:10;save();closeOv();view('focus');toast(on?'Early bird. +25 XP':'Checked in. +10 XP',3000)};
+ if($('mPlan'))$('mPlan').onclick=function(){skipM=true;closeOv();tab='today';view('plan')};
+ $('mSkip').onclick=function(){skipM=true;closeOv()}}
+function gate(){if(S.run)return;var n=nowM(),want='';
+ if(n>=240&&n<720&&!chk(ds(0)).up&&!skipM)want='m';
+ else{var tgt=n<240?ds(0):ds(1);if((n>=tm(S.set.plan)||n<240)&&!chk(tgt).planned&&!skipP)want='p'+tgt}
+ if(want===curOv)return;
+ if(want==='m')mornO();else if(want)planO(want.slice(1));else if(curOv)closeOv()}
+function rhythm(){$('sWake').value=S.set.wake;$('sPlan').value=S.set.plan;
+ $('sWake').onchange=function(){if(this.value){S.set.wake=this.value;save()}};
+ $('sPlan').onchange=function(){if(this.value){S.set.plan=this.value;save();skipP=false}};
+ $('openPlan').onclick=function(){skipP=false;planO(ds(1))};
+ setInterval(function(){var n=nowM(),k=ds(0);
+  if(n===tm(S.set.wake)&&lastN!=='w'+k){lastN='w'+k;notify('Time to get up','Open Vault, check in, win the morning.')}
+  if(n===tm(S.set.plan)&&lastN!=='p'+k){lastN='p'+k;notify('Plan tomorrow','Three tasks, then sleep.')}
+  gate()},20000);
+ document.addEventListener('visibilitychange',function(){if(!document.hidden)gate()})}
+load();
+S.set=S.set||{wake:'06:30',plan:'21:30'};S.chk=S.chk||{};
+$('mission').value=S.mission;$('mission').oninput=function(){S.mission=this.value;save()};
+Array.prototype.forEach.call(document.querySelectorAll('nav button'),function(b){b.onclick=function(){view(b.dataset.v)}});
+$('go').onclick=startS;$('quit').onclick=function(){if(confirm('Give up this session? You will lose the XP.'))finish(false)};
+$('tToday').onclick=function(){tab='today';tasks()};$('tTom').onclick=function(){tab='tom';tasks()};
+function addT(){var v=$('tIn').value.trim();if(!v)return;S.tasks.push({id:Date.now(),t:v,d:tab==='tom'?ds(1):ds(0),done:false});$('tIn').value='';save();tasks();banner()}
+$('tAdd').onclick=addT;$('tIn').onkeydown=function(e){if(e.key==='Enter')addT()};
+$('rAdd').onclick=function(){var n=$('rName').value.trim(),c=parseInt($('rCost').value,10);if(n&&c>0){S.rewards.push({id:Date.now(),n:n,c:c});$('rName').value='';$('rCost').value='';save();shop()}};
+$('notif').onclick=function(){try{Notification.requestPermission().then(function(p){$('notif').textContent=p==='granted'?'Alerts on':'Blocked by browser. Allow notifications in site settings.'})}catch(e){$('notif').textContent='Not supported in this browser'}};
+S.tasks=S.tasks.filter(function(t){return t.d>=ds(-1)});
+$('quote').textContent=QUOTES[Math.floor(Math.random()*QUOTES.length)];
+modes();head();stats();ui();rhythm();gate();
+if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('sw.js').catch(function(){})})}
+})();
+</script>
+</body>
+</html>
